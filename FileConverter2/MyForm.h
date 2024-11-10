@@ -10,6 +10,9 @@ namespace FileConverter2 {
 	using namespace System::Drawing;
 	using namespace System::IO;
 	using namespace std;
+	#include"hexconvert.cpp";
+	#include"binconvert.cpp";
+	#include"strconvert.cpp"
 
 	/// <summary>
 	/// Summary for MyForm
@@ -248,300 +251,25 @@ namespace FileConverter2 {
 		}
 	}
 	private: System::Void strconvert_Click(System::Object^ sender, System::EventArgs^ e) {
-		//retrieve input from textbox
-		String^ s = strText->Text;
-		int len = strText->Text->Length;  //number of loop iterations corresponds to number of characters in file
-		//Initializing result and dummy strings
-		String^ bin = "";
-		String^ binres = "";
-		String^ hexres = "";
-		String^ firsthex = "";
-		String^ secondhex = "";
-		for (int i = 0; i <= len-1 ; i++)
-		{
-			// convert each char to
-			// ASCII value
-			int val = int(s[i]);
+		
+		binText->Text = strtobin(strText->Text);
+		hexText->Text = strtohex(strText->Text);
 
-			// Convert ASCII value to binary
-			//loop reads every 8 characters. Adds 1 if decimal divisible by 2 and 0 if not
-			for (int j = 0; j < 8; j++) {
-				(val % 2) ? bin = "1" + bin :
-					bin = "0" + bin;
-				val /= 2;
-			}
-			binres +=bin;
-			//reset dummy string
-			bin = "";
-		};
-		
-		for (int k = 0; k <= len - 1; k++)
-		{
-			//Divide decimal value by 16 to get first part of the hexadecimal output 
-			int val = int(s[k]);
-			firsthex = (val / 16).ToString();
-			//Get remainder of the division and map to the second part of hexadecimal output
-			int num = val % 16;
-			switch(num)
-			{
-			case 0:
-				secondhex = "0";
-				break;
-			case 1:
-				secondhex = "1";
-				break;
-			case 2:
-				secondhex = "2";
-				break;
-			case 3:
-				secondhex = "3";
-				break;
-			case 4:
-				secondhex = "4";
-				break;
-			case 5:
-				secondhex = "5";
-				break;
-			case 6:
-				secondhex = "6";
-				break;
-			case 7:
-				secondhex = "7";
-				break;
-			case 8:
-				secondhex = "8";
-				break;
-			case 9:
-				secondhex = "9";
-				break;
-			case 10:
-				secondhex = "a";
-				break;
-			case 11:
-				secondhex = "b";
-				break;
-			case 12:
-				secondhex = "c";
-				break;
-			case 13:
-				secondhex = "d";
-				break;
-			case 14:
-				secondhex = "e";
-				break;
-			case 15:
-				secondhex = "f";
-				break;
-			}
-			//Add the two parts to an ouput string
-			hexres = hexres + firsthex + secondhex ;
-		}
-		binText->Text = binres;
-		hexText->Text = hexres;
-		
 	}
 private: System::Void binconvert_Click(System::Object^ sender, System::EventArgs^ e) {
-	//initializing binary base value, decimal value and result strings
-	String^ bin = binText->Text;
-	String^ resStr = "";
-	String^ resHex = "";
-	String^ hex = "";
-	int dec = 0;
-	int len = bin->Length ;
-	int base_val = 1;
-	
-	//double for loops with related indices so that 
-	//the base and decimal value restarts for every 8 elements
-	//decreasing index to read from right to left
-	for (int i = len / 8; i > 0; i--) {
 
-		for (int j = 8 * i - 1; j >= 8 * i - 8; j--) {
-			//add the base value if a '1' is found in the string
-			if (bin[j] == '1')
-				dec += base_val;
-			//multiply base value by 2 
-			base_val = base_val * 2;
-		}
-		//dec will be the sum of the 8 characters, and will be the decimal value
-		//use dec as the ASCII value to be passed to char function
-		Char letter = (char)dec;
-		//add to result string
-		resStr = letter + resStr;
-		//reset
-		base_val = 1;
-		dec = 0;
-		
-	}
-	// same double for loops but adjusted for every 4 elements
-	for (int i = len / 4; i > 0; i--) {
+	hexText->Text = bintohex(binText->Text);
+	strText->Text = bintochar(binText->Text);
 
-		for (int j = 4 * i - 1; j >= 4 * i - 4; j--) {
-			if (bin[j] == '1')
-				dec += base_val;
-			base_val = base_val * 2;
-
-		}
-			//map retrieved decimal value to hexadecimal equivalent
-			switch (dec)
-			{
-			case 0:
-				hex = "0";
-				break;
-			case 1:
-				hex = "1";
-				break;
-			case 2:
-				hex = "2";
-				break;
-			case 3:
-				hex = "3";
-				break;
-			case 4:
-				hex = "4";
-				break;
-			case 5:
-				hex = "5";
-				break;
-			case 6:
-				hex = "6";
-				break;
-			case 7:
-				hex = "7";
-				break;
-			case 8:
-				hex = "8";
-				break;
-			case 9:
-				hex = "9";
-				break;
-			case 10:
-				hex = "a";
-				break;
-			case 11:
-				hex = "b";
-				break;
-			case 12:
-				hex = "c";
-				break;
-			case 13:
-				hex = "d";
-				break;
-			case 14:
-				hex = "e";
-				break;
-			case 15:
-				hex = "f";
-				break;
-			}
-			//reset decimal and base
-		base_val = 1;
-		dec = 0;
-		resHex = hex + resHex;
-	}
-
-	//output result strings
-	hexText->Text = resHex;
-	strText->Text = resStr;
 	}
 
 	 
-
-
 private: System::Void hexconvert_Click(System::Object^ sender, System::EventArgs^ e) {
-	//initializing decimal values, binary base value and result strings
-	int len = hexText->Text->Length;
-	String^ bin = "";
-	String^ binres = "";
-	String^ resStr = "";
-	String^ Hex = hexText->Text;
-	//initialize two different decimal values to analyse
-	int bindec = 0;
-	int strdec = 0;
-	int base_val = 1;
-	//take each element and map into its decimal value
-	for (int i = 0; i< len ; i++) {
-		Char hex = Hex[i];
-		switch (hex) {
-		case '1':
-			bindec = 1;
-			break;
-		case '2':
-			bindec = 2;
-			break;
-		case '3':
-			bindec = 3;
-			break;
-		case '4':
-			bindec = 4;
-			break;
-		case '5':
-			bindec = 5;
-			break;
-		case '6':
-			bindec = 6;
-			break;
-		case '7':
-			bindec = 7;
-			break;
-		case '8':
-			bindec = 8;
-			break;
-		case '9':
-			bindec = 9;
-			break;
-		case '0':
-			bindec =0 ;
-			break;
-		case 'a':
-			bindec = 10;
-			break;
-		case 'b':
-			bindec = 11;
-			break;
-		case 'c':
-			bindec = 12;
-			break;
-		case 'd':
-			bindec = 13;
-			break;
-		case 'e':
-			bindec = 14;
-			break;
-		case 'f':
-			bindec = 15;
-			break;
-		}
-
-		//take each decimal and split into 4bits
-		for (int j = 0; j < 4; j++) {
-			(bindec % 2) ? bin = "1" + bin :
-				bin = "0" + bin;
-			bindec /= 2;
-		}
-		binres += bin;
-		//reset
-		bin = "";
-		bindec = 0;
-		//ouput resulting binary string
-		binText->Text = binres;
 	
-	}
-	//use binary string to convert to CHAR as before
-	int size = binres->Length;
-	for (int i = size / 8; i > 0; i--) {
-		for (int j = 8 * i - 1; j >= 8 * i - 8; j--) {
-			if (binres[j] == '1')
-				strdec += base_val;
-			base_val = base_val * 2;
-		}
-		Char letter = (char)strdec;
-		resStr = letter + resStr;
-		//reset
-		base_val = 1;
-		strdec = 0;
-	}
-	//output result
-	strText->Text = resStr;
+	binText->Text = hextobin(hexText->Text);
+	//Instead of reading every two hexadecimal characters to output one CHAR value, it is more code efficient to
+	//take the resulting binary text and use the existing bin-to-char conversion function
+	strText->Text = bintochar(binText->Text);
 }
 };
 }

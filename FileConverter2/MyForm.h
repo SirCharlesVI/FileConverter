@@ -253,7 +253,7 @@ namespace FileConverter2 {
 	private: System::Void strconvert_Click(System::Object^ sender, System::EventArgs^ e) {
 		
 		binText->Text = strtobin(strText->Text);
-		hexText->Text = strtohex(strText->Text);
+		hexText->Text = bintohex(binText->Text);
 
 	}
 private: System::Void binconvert_Click(System::Object^ sender, System::EventArgs^ e) {
